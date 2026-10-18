@@ -46,6 +46,6 @@ npm run preview --> enables the production build locally for verification
 
 ### Notes
 
-[1] Ensure `"test": "vitest"` is added under scripts in `package.json`
+[1] Ensure `"test:unit": "vitest"` is added under scripts in `package.json`
 
 [2] Ensure `"test:e2e": "cucumber-js --config cucumber.mjs"` is added under scripts in `package.json`
