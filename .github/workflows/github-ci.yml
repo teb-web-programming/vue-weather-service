@@ -28,7 +28,7 @@ jobs:
         run: npm ci
 
       - name: Run unit tests
-        run: npm test -- --run
+        run: npm run test:unit -- --run
 
   acceptance-tests:
     name: Acceptance Tests
@@ -89,7 +89,6 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Check whether this commit is associated with a merged PR.
           MERGED_PRS=$(gh api \
             "repos/${REPOSITORY}/commits/${EVENT_SHA}/pulls" \
             --jq '[.[] | select(.merged_at != null)] | length')
@@ -101,6 +100,7 @@ jobs:
           fi
 
       - name: Increment VERSION
+        id: version
         env:
           INCREMENT_TYPE: ${{ steps.increment.outputs.type }}
         run: |
@@ -130,7 +130,31 @@ jobs:
           printf '%s\n' "$NEXT_VERSION" > VERSION
 
           echo "Version: ${CURRENT_VERSION} -> ${NEXT_VERSION}"
+          echo "next_version=${NEXT_VERSION}" >> "$GITHUB_OUTPUT"
 
           git add VERSION
           git commit -m "GitHub CI: update version to ${NEXT_VERSION}"
+
+      - name: Create version tag
+        env:
+          NEXT_VERSION: ${{ steps.version.outputs.next_version }}
+        run: |
+          set -euo pipefail
+
+          TAG="v${NEXT_VERSION}"
+
+          if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null 2>&1; then
+            echo "ERROR: Tag ${TAG} already exists on origin."
+            exit 1
+          fi
+
+          git tag "$TAG"
+
+      - name: Push version commit and tag
+        env:
+          NEXT_VERSION: ${{ steps.version.outputs.next_version }}
+        run: |
+          set -euo pipefail
+
           git push origin HEAD:main
+          git push origin "v${NEXT_VERSION}"

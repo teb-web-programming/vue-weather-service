@@ -20,8 +20,8 @@ npm run dev --> starts development server
 
 ```
 npm install -D vitest @vue/test-utils jsdom --> sets up test environment
-npm test --> runs tests in watch mode
-npm test -- --run --> runs tests once and exits
+npm run test:unit --> runs tests in watch mode
+npm run test:unit -- --run --> runs tests once and exits
 ```
 
 ### Acceptance test setup verify and execution _[2]_
