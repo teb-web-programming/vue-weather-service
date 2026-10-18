@@ -1,0 +1,151 @@
+/* Weather cards */
+
+.weather-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch;
+    gap: 1rem;
+}
+
+.weather-grid__item {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 0 1 calc((100% - 3rem) / 4);
+}
+
+.weather-overview {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    gap: 1rem;
+}
+
+.weather-card {
+    flex: 0 0 auto;
+    width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.forecast-panel {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+}
+
+.weather-card__location,
+.weather-card__region,
+.weather-card__condition,
+.weather-card__temperature,
+.weather-card__feels-like {
+    overflow-wrap: anywhere;
+}
+
+/* Keep forecast tables within their own panels */
+
+.forecast-panel__scroll {
+    width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+}
+
+.forecast-table {
+    width: 100%;
+    min-width: 520px;
+    table-layout: fixed;
+}
+
+.forecast-table th,
+.forecast-table td {
+    overflow-wrap: break-word;
+}
+
+.forecast-table__temperatures,
+.forecast-table__wind {
+    white-space: nowrap;
+}
+
+/* Medium screens */
+
+@media (max-width: 1100px) {
+    .weather-grid__item {
+        flex-basis: calc((100% - 1rem) / 2);
+    }
+}
+
+/* Tablets and smaller screens */
+
+@media (max-width: 760px) {
+    .app-main {
+        padding-top: 1.5rem;
+        padding-bottom: 2.5rem;
+    }
+
+    .dashboard-intro {
+        margin-bottom: 1.75rem;
+    }
+
+    .location-section,
+    .weather-section,
+    .comparison-panel {
+        margin-bottom: 1.75rem;
+    }
+}
+
+/* Phones */
+
+@media (max-width: 480px) {
+    .app-header,
+    .app-footer {
+        padding-right: 1rem;
+        padding-left: 1rem;
+    }
+
+    .app-main {
+        width: calc(100% - 2rem);
+        padding-top: 1.25rem;
+    }
+
+    .weather-grid__item {
+        flex-basis: 100%;
+    }
+
+    .location-search__controls {
+        flex-direction: column;
+    }
+
+    .location-search__controls > button[type="submit"] {
+        width: 100%;
+    }
+
+    .selected-location-chip {
+        max-width: 100%;
+    }
+
+    .selected-location-chip__region {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .empty-state {
+        padding: 1.25rem;
+    }
+}
+
+/* Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

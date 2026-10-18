@@ -1,0 +1,136 @@
+name: Vue Weather Service CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm test -- --run
+
+  acceptance-tests:
+    name: Acceptance Tests
+    runs-on: ubuntu-latest
+    needs: unit-tests
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E acceptance tests
+        run: npm run test:e2e
+
+  version:
+    name: Update Version
+    runs-on: ubuntu-latest
+    needs: acceptance-tests
+
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      !contains(github.event.head_commit.message, 'GitHub CI:')
+
+    permissions:
+      contents: write
+      pull-requests: read
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "teb-github-ci-actions"
+          git config user.email "teb-github-ci-actions@users.noreply.github.com"
+
+      - name: Determine version increment
+        id: increment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          EVENT_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          # Check whether this commit is associated with a merged PR.
+          MERGED_PRS=$(gh api \
+            "repos/${REPOSITORY}/commits/${EVENT_SHA}/pulls" \
+            --jq '[.[] | select(.merged_at != null)] | length')
+
+          if [[ "$MERGED_PRS" -gt 0 ]]; then
+            echo "type=patch" >> "$GITHUB_OUTPUT"
+          else
+            echo "type=major" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Increment VERSION
+        env:
+          INCREMENT_TYPE: ${{ steps.increment.outputs.type }}
+        run: |
+          set -euo pipefail
+
+          if [[ ! -f VERSION ]]; then
+            echo "ERROR: VERSION file is missing."
+            exit 1
+          fi
+
+          CURRENT_VERSION=$(tr -d '[:space:]' < VERSION)
+
+          if [[ ! "$CURRENT_VERSION" =~ ^[0-9]+\.[0-9]+$ ]]; then
+            echo "ERROR: Invalid VERSION value: '$CURRENT_VERSION'"
+            exit 1
+          fi
+
+          MAJOR="${CURRENT_VERSION%%.*}"
+          PATCH="${CURRENT_VERSION#*.}"
+
+          if [[ "$INCREMENT_TYPE" == "patch" ]]; then
+            NEXT_VERSION="${MAJOR}.$((PATCH + 1))"
+          else
+            NEXT_VERSION="$((MAJOR + 1)).0"
+          fi
+
+          printf '%s\n' "$NEXT_VERSION" > VERSION
+
+          echo "Version: ${CURRENT_VERSION} -> ${NEXT_VERSION}"
+
+          git add VERSION
+          git commit -m "GitHub CI: update version to ${NEXT_VERSION}"
+          git push origin HEAD:main

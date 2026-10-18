@@ -1,0 +1,149 @@
+@font-face {
+    font-family: "DM Sans";
+    src: url("../assets/fonts/DMSans.ttf") format("truetype");
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Fraunces";
+    src: url("../assets/fonts/Fraunces.ttf") format("truetype");
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+}
+
+:root {
+    font-family: var(--font-body), sans-serif;
+    color: var(--color-text);
+    background: var(--color-background);
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    color-scheme: light;
+
+    --font-body: "DM Sans", Arial, sans-serif;
+    --font-heading: "Fraunces", Georgia, serif;
+
+    /* Light theme */
+    --color-background: #f3f5f8;
+    --color-surface: #ffffff;
+    --color-text: #202733;
+    --color-text-muted: #687486;
+    --color-border: #dce2e9;
+
+    --color-accent: #486581;
+    --color-accent-hover: #344f69;
+    --color-accent-soft: #e8eef5;
+
+    --color-error: #a33b32;
+    --color-error-soft: #f9eae8;
+
+    --color-success: #46765f;
+    --color-success-soft: #e5efe8;
+
+    --color-weather-cold: #dceafa;
+    --color-weather-cool: #e9eff5;
+    --color-weather-mild: #e3efe4;
+    --color-weather-warm: #faedda;
+    --color-weather-hot: #f8e3d9;
+
+    /* Temperature gradients — light theme */
+    --gradient-weather-cold-cool: linear-gradient(
+            135deg,
+            #d5eef3,
+            #dceafa
+    );
+    --gradient-weather-cool-mild: linear-gradient(
+            135deg,
+            #dceafa,
+            #dcefe7
+    );
+    --gradient-weather-mild-warm: linear-gradient(
+            135deg,
+            #dcefe2,
+            #f1e8c9
+    );
+    --gradient-weather-warm-hot: linear-gradient(
+            135deg,
+            #f1e8c9,
+            #f3d8c9
+    );
+
+    /* Five-day forecast panel */
+    --color-forecast-panel: #e4ebf2;
+
+    --color-focus: rgb(72 101 129 / 40%);
+    --color-selection-text: #ffffff;
+    --color-selection-background: #486581;
+
+    --radius-small: 6px;
+    --radius-medium: 10px;
+    --radius-large: 14px;
+
+    --shadow-card: 0 2px 12px rgb(35 49 66 / 5%);
+
+    --content-width: 1600px;
+}
+
+/* Dark theme */
+:root[data-theme="dark"] {
+    color-scheme: dark;
+
+    --color-background: #171d27;
+    --color-surface: #222b38;
+    --color-text: #edf2f8;
+    --color-text-muted: #a9b5c5;
+    --color-border: #394657;
+
+    --color-accent: #9dbfe4;
+    --color-accent-hover: #bad2ee;
+    --color-accent-soft: #2b394b;
+
+    --color-error: #f0a39b;
+    --color-error-soft: #482d2b;
+
+    --color-success: #9ac6a8;
+    --color-success-soft: #2d4438;
+
+    --color-weather-cold: #293e57;
+    --color-weather-cool: #2b3745;
+    --color-weather-mild: #055c2d;
+    --color-weather-warm: #6e612d;
+    --color-weather-hot: #9c471b;
+
+    /* Temperature gradients — dark theme */
+    --gradient-weather-cold-cool: linear-gradient(
+            135deg,
+            #263e4a,
+            #293e57
+    );
+    --gradient-weather-cool-mild: linear-gradient(
+            135deg,
+            #293e57,
+            #2d4438
+    );
+    --gradient-weather-mild-warm: linear-gradient(
+            135deg,
+            #2d4438,
+            #4a3b2c
+    );
+    --gradient-weather-warm-hot: linear-gradient(
+            135deg,
+            #4a3b2c,
+            #4b342e
+    );
+
+    /* Five-day forecast panel */
+    --color-forecast-panel: #293647;
+
+    --color-focus: rgb(157 191 228 / 50%);
+    --color-selection-text: #171d27;
+    --color-selection-background: #9dbfe4;
+
+    --shadow-card: 0 2px 14px rgb(0 0 0 / 18%);
+}

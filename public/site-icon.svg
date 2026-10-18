@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+    <defs>
+        <linearGradient id="sunFill" x1="0.2" y1="0" x2="0.8" y2="1">
+            <stop offset="0" stop-color="#FFF8C9"/>
+            <stop offset="0.35" stop-color="#FFD95A"/>
+            <stop offset="0.75" stop-color="#FFAD32"/>
+            <stop offset="1" stop-color="#E98724"/>
+        </linearGradient>
+
+        <radialGradient id="sunGlow" cx="35%" cy="25%" r="75%">
+            <stop offset="0" stop-color="#FFFBE1" stop-opacity=".95"/>
+            <stop offset=".45" stop-color="#FFE77B" stop-opacity=".5"/>
+            <stop offset="1" stop-color="#FFB42F" stop-opacity="0"/>
+        </radialGradient>
+
+        <linearGradient id="cloudFill" x1="0" y1="0" x2=".2" y2="1">
+            <stop offset="0" stop-color="#FFFFFF"/>
+            <stop offset=".25" stop-color="#E8F2FA"/>
+            <stop offset=".65" stop-color="#B8CBDD"/>
+            <stop offset="1" stop-color="#7894B5"/>
+        </linearGradient>
+
+        <linearGradient id="cloudEdge" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#FFFFFF"/>
+            <stop offset=".45" stop-color="#D9EAF7"/>
+            <stop offset="1" stop-color="#526F99"/>
+        </linearGradient>
+
+        <linearGradient id="rainFill" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#D7FAFF"/>
+            <stop offset=".35" stop-color="#64D8F5"/>
+            <stop offset=".7" stop-color="#149DD8"/>
+            <stop offset="1" stop-color="#2764B5"/>
+        </linearGradient>
+
+        <linearGradient id="rainHighlight" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#FFFFFF" stop-opacity=".95"/>
+            <stop offset="1" stop-color="#B8F5FF" stop-opacity=".1"/>
+        </linearGradient>
+
+        <linearGradient id="outline" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#FFFFFF" stop-opacity=".95"/>
+            <stop offset=".5" stop-color="#A9C7E1"/>
+            <stop offset="1" stop-color="#45668E"/>
+        </linearGradient>
+
+        <filter id="softShadow" x="-30%" y="-30%" width="160%" height="170%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="1.5"/>
+            <feOffset dy="1.2"/>
+            <feComponentTransfer>
+                <feFuncA type="linear" slope=".28"/>
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+
+        <filter id="sunBlur" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2.5"/>
+        </filter>
+    </defs>
+
+    <!-- Soft sunlight -->
+    <circle cx="23" cy="21" r="17" fill="#FFD75A" opacity=".18" filter="url(#sunBlur)"/>
+
+    <!-- Sun rays -->
+    <g stroke="#FFBF45" stroke-width="2.1" stroke-linecap="round" opacity=".9">
+        <path d="M23 4.5v3.2"/>
+        <path d="M23 34.3v3"/>
+        <path d="M6.5 21h3.2"/>
+        <path d="M36.3 21h3"/>
+        <path d="M11.3 9.3l2.3 2.3"/>
+        <path d="M32.4 30.4l2.3 2.3"/>
+        <path d="M11.3 32.7l2.3-2.3"/>
+        <path d="M32.4 11.6l2.3-2.3"/>
+    </g>
+
+    <!-- Sun disc -->
+    <circle cx="23" cy="21" r="11.5" fill="#E99A2D" opacity=".35"/>
+    <circle cx="23" cy="20" r="10.5" fill="url(#sunFill)" stroke="#EBA238" stroke-width=".8"/>
+    <circle cx="23" cy="20" r="9.5" fill="url(#sunGlow)"/>
+    <path d="M15.8 17.2c1.4-3.3 4.2-5 7.4-5.2"
+          fill="none" stroke="#FFFFFF" stroke-width="1.4"
+          stroke-linecap="round" opacity=".85"/>
+
+    <!-- Cloud shadow -->
+    <path d="M13.7 40.4
+           C8.3 40.4 5.2 36.8 5.2 32.5
+           C5.2 28.3 8.6 25 12.9 25
+           C14.2 19.8 18.7 16.5 24 17.2
+           C28.8 17.8 32.2 21.4 32.9 25.8
+           C34 25.3 35.1 25 36.3 25
+           C41.8 25 46 29.2 46 34.3
+           C46 38 43 40.4 38.8 40.4Z"
+          fill="#24476C" opacity=".2" filter="url(#softShadow)"/>
+
+    <!-- Cloud body -->
+    <path d="M13.7 39
+           C8.3 39 5.2 35.7 5.2 31.7
+           C5.2 27.5 8.6 24.2 12.9 24.2
+           C14.2 19.4 18.7 16.2 24 16.9
+           C28.8 17.5 32.2 21 32.9 25.2
+           C34 24.8 35.1 24.5 36.3 24.5
+           C41.8 24.5 46 28.6 46 33.6
+           C46 36.8 43 39 38.8 39Z"
+          fill="url(#cloudFill)"
+          stroke="url(#cloudEdge)"
+          stroke-width="1.5"
+          stroke-linejoin="round"
+          filter="url(#softShadow)"/>
+
+    <!-- Cloud glass highlight -->
+    <path d="M9.1 29.1
+           C10.2 26.8 12.3 26 14.1 26.4
+           C15.8 21.1 19.6 18.7 23.8 19.3
+           C27.1 19.7 29.5 22.1 30.3 25.1"
+          fill="none" stroke="#FFFFFF" stroke-width="1.5"
+          stroke-linecap="round" opacity=".9"/>
+
+    <!-- Rain drops -->
+    <g filter="url(#softShadow)">
+        <path d="M12.7 44.3
+             C12.7 42.6 15.1 39.8 15.1 39.8
+             C15.1 39.8 17.5 42.6 17.5 44.3
+             C17.5 45.7 16.4 46.8 15.1 46.8
+             C13.8 46.8 12.7 45.7 12.7 44.3Z"
+              fill="url(#rainFill)"/>
+        <path d="M23 48.1
+             C23 46.3 25.4 43.5 25.4 43.5
+             C25.4 43.5 27.8 46.3 27.8 48.1
+             C27.8 49.5 26.7 50.6 25.4 50.6
+             C24.1 50.6 23 49.5 23 48.1Z"
+              fill="url(#rainFill)"/>
+        <path d="M34 44.3
+             C34 42.6 36.4 39.8 36.4 39.8
+             C36.4 39.8 38.8 42.6 38.8 44.3
+             C38.8 45.7 37.7 46.8 36.4 46.8
+             C35.1 46.8 34 45.7 34 44.3Z"
+              fill="url(#rainFill)"/>
+        <path d="M43 49
+             C43 47.5 44.9 45.2 44.9 45.2
+             C44.9 45.2 46.8 47.5 46.8 49
+             C46.8 50.1 45.9 51 44.9 51
+             C43.9 51 43 50.1 43 49Z"
+              fill="url(#rainFill)"/>
+    </g>
+
+    <!-- Rain glints -->
+    <g fill="none" stroke="url(#rainHighlight)" stroke-width="1"
+       stroke-linecap="round" opacity=".95">
+        <path d="M14.2 42.5l.5-.8"/>
+        <path d="M24.5 46.3l.5-.8"/>
+        <path d="M35.5 42.5l.5-.8"/>
+        <path d="M44.1 47.5l.4-.6"/>
+    </g>
+</svg>
