@@ -62,11 +62,10 @@ jobs:
     if: >-
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
-      !contains(github.event.head_commit.message, 'GitHub CI:')
+      !startsWith(github.event.head_commit.message, 'GitHub CI: update version to ')
 
     permissions:
       contents: write
-      pull-requests: read
 
     steps:
       - name: Checkout main
@@ -77,27 +76,45 @@ jobs:
 
       - name: Configure Git
         run: |
+          set -euo pipefail
+
           git config user.name "teb-github-ci-actions"
           git config user.email "teb-github-ci-actions@users.noreply.github.com"
 
       - name: Determine version increment
         id: increment
         env:
-          GH_TOKEN: ${{ github.token }}
-          REPOSITORY: ${{ github.repository }}
-          EVENT_SHA: ${{ github.sha }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         run: |
           set -euo pipefail
 
-          MERGED_PRS=$(gh api \
-            "repos/${REPOSITORY}/commits/${EVENT_SHA}/pulls" \
-            --jq '[.[] | select(.merged_at != null)] | length')
+          COMMIT_SUBJECT="${COMMIT_MESSAGE%%$'\n'*}"
 
-          if [[ "$MERGED_PRS" -gt 0 ]]; then
-            echo "type=patch" >> "$GITHUB_OUTPUT"
-          else
-            echo "type=major" >> "$GITHUB_OUTPUT"
+          if [[ ! "$COMMIT_SUBJECT" =~ ^(bug|fix|doc|feat|updt|checkpt):[[:space:]]+.+$ ]]; then
+            echo "::error::prefix missing/mismatch. Expected one of: bug:, fix:, doc:, feat:, updt:, checkpt:."
+            echo "::error::Commit subject: ${COMMIT_SUBJECT}"
+            exit 1
           fi
+
+          PREFIX="${BASH_REMATCH[1]}"
+
+          case "$PREFIX" in
+            bug|fix|doc)
+              INCREMENT_TYPE="patch"
+              ;;
+            feat|updt)
+              INCREMENT_TYPE="minor"
+              ;;
+            checkpt)
+              INCREMENT_TYPE="major"
+              ;;
+          esac
+
+          echo "Commit subject: ${COMMIT_SUBJECT}"
+          echo "Prefix: ${PREFIX}"
+          echo "Version increment: ${INCREMENT_TYPE}"
+
+          echo "type=${INCREMENT_TYPE}" >> "$GITHUB_OUTPUT"
 
       - name: Increment VERSION
         id: version
@@ -107,25 +124,45 @@ jobs:
           set -euo pipefail
 
           if [[ ! -f VERSION ]]; then
-            echo "ERROR: VERSION file is missing."
+            echo "::error::VERSION file is missing."
             exit 1
           fi
 
           CURRENT_VERSION=$(tr -d '[:space:]' < VERSION)
 
-          if [[ ! "$CURRENT_VERSION" =~ ^[0-9]+\.[0-9]+$ ]]; then
-            echo "ERROR: Invalid VERSION value: '$CURRENT_VERSION'"
+          if [[ ! "$CURRENT_VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*))?$ ]]; then
+            echo "::error::Invalid VERSION value: '${CURRENT_VERSION}'. Expected MAJOR.MINOR or MAJOR.MINOR.PATCH."
             exit 1
           fi
 
-          MAJOR="${CURRENT_VERSION%%.*}"
-          PATCH="${CURRENT_VERSION#*.}"
-
-          if [[ "$INCREMENT_TYPE" == "patch" ]]; then
-            NEXT_VERSION="${MAJOR}.$((PATCH + 1))"
+          if [[ "$CURRENT_VERSION" =~ ^([0-9]+)\.([0-9]+)$ ]]; then
+            MAJOR="${BASH_REMATCH[1]}"
+            MINOR="${BASH_REMATCH[2]}"
+            PATCH=0
           else
-            NEXT_VERSION="$((MAJOR + 1)).0"
+            IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
           fi
+
+          case "$INCREMENT_TYPE" in
+            patch)
+              PATCH=$((PATCH + 1))
+              ;;
+            minor)
+              MINOR=$((MINOR + 1))
+              PATCH=0
+              ;;
+            major)
+              MAJOR=$((MAJOR + 1))
+              MINOR=0
+              PATCH=0
+              ;;
+            *)
+              echo "::error::Unknown version increment: ${INCREMENT_TYPE}"
+              exit 1
+              ;;
+          esac
+
+          NEXT_VERSION="${MAJOR}.${MINOR}.${PATCH}"
 
           printf '%s\n' "$NEXT_VERSION" > VERSION
 
@@ -144,7 +181,7 @@ jobs:
           TAG="v${NEXT_VERSION}"
 
           if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null 2>&1; then
-            echo "ERROR: Tag ${TAG} already exists on origin."
+            echo "::error::Tag ${TAG} already exists on origin."
             exit 1
           fi
 
@@ -156,5 +193,8 @@ jobs:
         run: |
           set -euo pipefail
 
-          git push origin HEAD:main
-          git push origin "v${NEXT_VERSION}"
+          TAG="v${NEXT_VERSION}"
+
+          git push --atomic origin \
+            HEAD:refs/heads/main \
+            "refs/tags/${TAG}"
