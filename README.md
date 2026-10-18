@@ -1,6 +1,6 @@
 # Vue Weather Service
 
-## Installation
+### Installation
 
 The project requires the following software and plugins to be installed.
 
@@ -13,7 +13,7 @@ The project requires the following software and plugins to be installed.
 
 ***
 
-## Contribute to the project
+### Contribute to the project
 
 The main branch is reserved for the admin and can be updated only after a merge request is raised and approved to add
 changes. To contribute to the project, please follow the steps below.
@@ -39,7 +39,7 @@ git push --> changes are added to remote, ready to be reviewed
 
 ***
 
-## Self-Review Code Before Commit
+### Self-Review Code Before Commit
 
 The code should be reviewed and a successful maven build should be run to confirm the desired output.
 
@@ -52,3 +52,20 @@ Mac:
 Windows:
 Ctrl + Alt + L --> aligns the code
 ```
+
+***
+
+### Commit Message Convention
+
+Every commit pushed to the repository must use one of the following prefixes in its subject line:
+
+| Prefix     | Version increment | Purpose                             |
+|------------|-------------------|-------------------------------------|
+| `bug:`     | PATCH             | Bug fixes                           |
+| `fix:`     | PATCH             | Corrections and minor fixes         |
+| `doc:`     | PATCH             | Documentation changes               |
+| `feat:`    | MINOR             | New features                        |
+| `updt:`    | MINOR             | Significant updates or improvements |
+| `checkpt:` | MAJOR             | Major project milestones            |
+
+**Format:** `prefix: short description`
